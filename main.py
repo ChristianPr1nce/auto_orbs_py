@@ -3,8 +3,7 @@ import cv2
 import numpy as np
 import time
 import pydirectinput
-
-
+import keyboard
 
 def screenshot():
     # x496, y300
@@ -37,24 +36,33 @@ def click_object(position):
     pydirectinput.moveTo(x, y)
     pydirectinput.doubleClick()
 
+def toggle_script_state():
+    # Toggle the script's state between running and paused.
+    global script_running
+    script_running = not script_running
 
+script_running = False
+
+keyboard.on_press_key(";", lambda e: toggle_script_state())
 
 while True:
-    # If keyboard interr
-    time.sleep(1)
-    screenshot()
-    read_screenshot = cv2.imread("screenshot.png")
-    template_path = "target2.png"
+    if script_running:
+        screenshot()
+        read_screenshot = cv2.imread("screenshot.png")
+        template_path = "target2.png"
 
-    result = find_object_on_screen(template_path, read_screenshot)
+        result = find_object_on_screen(template_path, read_screenshot)
 
-    if result is not None:
-        print("Found target.")
-        # Result needs to be offset by the region coordinates. 1920x1080 screen.
-        print("Target location: " + str(result[0] + 496) + ", " + str(result[1] + 300))
-        click_object((result[0] + 496, result[1] + 300))
+        if result is not None:
+            print("Found target.")
+            # Result needs to be offset by the region coordinates. 1920x1080 screen.
+            print("Target location: " + str(result[0] + 496) + ", " + str(result[1] + 300))
+            click_object((result[0] + 496, result[1] + 300))
 
+        else:
+            print("Target not found.")
+        
+        # Wait 1 second before trying again.
+        time.sleep(1)
     else:
-        print("Target not found.")
-    
-    # Wait 1 second before trying again.
+        print("Script paused. (Press ; to toggle)")
