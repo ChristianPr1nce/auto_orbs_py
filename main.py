@@ -26,7 +26,7 @@ def find_object_on_screen(template_path, screenshot):
     cv2.imwrite("result.png", screenshot)
 
     # Set a threshold for similarity (adjust as needed).
-    threshold = 0.7
+    threshold = 0.6
     if max_val >= threshold:
         # The object is found, and max_loc contains its top-left corner coordinates.
         # Calculate the center of the object.
@@ -39,6 +39,9 @@ def click_object(position):
     x, y = position
     # move the mouse to the center of the object and click it.
     pydirectinput.moveTo(x, y)
+    time.sleep(0.1)
+    pydirectinput.moveTo(x  + 2, y + 2)
+    time.sleep(0.1)
     pydirectinput.doubleClick()
 
 def toggle_script_state():
